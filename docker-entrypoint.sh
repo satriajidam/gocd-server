@@ -13,11 +13,11 @@ if [[ $# -eq 0 ]] ; then
 fi
 
 if [ "$1" = '/go-server/server.sh' ]; then
-  # if running go server as non-root, then initialize directory structure and call ourselves as `go` user
-  if [ "$(id -u)" != '0' ]; then
+  # if running go server as root, then initialize directory structure and call ourselves as `go` user
+  if [ "$(id -u)" = '0' ]; then
     # add our user and group first to make sure their IDs get assigned consistently,
     # regardless of whatever dependencies get added
-    addgroup -g "$(id -g)" go && adduser -D -u "$(id -u)" -s /bin/bash -G go go
+    addgroup -g "${GO_SERVER_GROUP_ID:-1000}" go && adduser -D -u "${GO_SERVER_USER_ID:-1000}" -s /bin/bash -G go go
 
     export SERVER_WORK_DIR="/go-working-dir"
     export GO_CONFIG_DIR="/go-working-dir/config"
